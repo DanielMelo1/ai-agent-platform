@@ -541,3 +541,26 @@ MIT License
 ## Related Projects
 
 - [k8s-production-platform](https://github.com/DanielMelo1/k8s-production-platform) - Foundation Kubernetes infrastructure with observability
+
+## CI/CD Pipeline
+
+**Automated deployment workflow:**
+
+![GitHub Actions](https://github.com/DanielMelo1/ai-agent-platform/workflows/CI%2FCD%20Pipeline/badge.svg)
+
+The project includes a complete CI/CD pipeline using GitHub Actions that:
+
+- Automatically builds Docker images on every push to main
+- Pushes images to GitHub Container Registry (ghcr.io)
+- Updates Kubernetes deployment manifests
+- Provides deployment instructions for EKS cluster
+
+**Pipeline stages:**
+1. Checkout code
+2. Login to GitHub Container Registry
+3. Build and tag Docker image
+4. Push to registry
+5. Update Kubernetes manifests
+
+**Visual documentation:** `docs/screenshots/07-github-actions-pipeline.png`
+
