@@ -480,7 +480,7 @@ Content-Type: application/json
 
 **Impact:** No functional changes, demonstrates version management
 
-### Issue 3: Docker Compose Version Warning
+### Issue 2: Docker Compose Version Warning
 
 **Problem:**
 ```
