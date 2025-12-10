@@ -566,7 +566,6 @@ Platform Engineer | Cloud Infrastructure | AI/ML Operations
 
 - LinkedIn: [danielaugustormelo](https://linkedin.com/in/danielaugustormelo)
 - GitHub: [DanielMelo1](https://github.com/DanielMelo1)
-- Portfolio: [d36ym3gb7903iq.cloudfront.net](http://d36ym3gb7903iq.cloudfront.net)
 
 ---
 
