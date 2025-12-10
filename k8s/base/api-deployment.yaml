@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-agent-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai-agent-api
+  template:
+    metadata:
+      labels:
+        app: ai-agent-api
+    spec:
+      containers:
+      - name: api
+        image: ai-agent-platform-api:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: ANTHROPIC_API_KEY
+          value: "demo-key"
+        - name: GOOGLE_API_KEY
+          value: "demo-key"
+        - name: QDRANT_HOST
+          value: "qdrant-service"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-agent-api-service
+spec:
+  selector:
+    app: ai-agent-api
+  ports:
+  - port: 80
+    targetPort: 8000
+  type: LoadBalancer
