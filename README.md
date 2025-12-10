@@ -86,19 +86,19 @@ Unlike single-provider AI platforms, this architecture enables:
 
 ### Infrastructure
 ```
-┌──────────────────────────────────────┐
-│         AWS EKS Cluster              │
+┌─────────────────────────────────────┐
+│         AWS EKS Cluster             │
 │  ┌────────────┐  ┌────────────┐     │
 │  │  API Pods  │  │   Qdrant   │     │
 │  │  (x2)      │  │   Pod      │     │
 │  └────────────┘  └────────────┘     │
-│                                      │
+│                                     │
 │  ┌────────────────────────────┐     │
 │  │   Monitoring Stack         │     │
 │  │  • Prometheus              │     │
 │  │  • Grafana                 │     │
 │  └────────────────────────────┘     │
-└──────────────────────────────────────┘
+└─────────────────────────────────────┘
          │
          ▼
   Terraform-managed
