@@ -1,17 +1,15 @@
 # AI Agent Platform
 
 ![Terraform](https://img.shields.io/badge/Terraform-1.13-7B42BC?logo=terraform&logoColor=white)
-![Kubernetes](https://img.shields.io/badge/Kubernetes-1.28-326CE5?logo=kubernetes&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-1.31-326CE5?logo=kubernetes&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-EKS-FF9900?logo=amazon-aws&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![LangChain](https://img.shields.io/badge/LangChain-0.3-1C3C3C?logo=chainlink&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-latest-2496ED?logo=docker&logoColor=white)
-![Prometheus](https://img.shields.io/badge/Prometheus-latest-E6522C?logo=prometheus&logoColor=white)
-![Grafana](https://img.shields.io/badge/Grafana-latest-F46800?logo=grafana&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-> Enterprise-grade AI orchestration platform with multi-provider LLM support, intelligent routing, Kubernetes deployment, and complete observability stack.
+Enterprise-grade AI orchestration platform with multi-provider LLM support, intelligent routing, and Kubernetes deployment.
 
 ---
 
@@ -22,30 +20,31 @@
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
-- [Deployment](#deployment)
+- [AWS Deployment](#aws-deployment)
 - [API Usage](#api-usage)
 - [Design Decisions](#design-decisions)
 - [Problems Encountered](#problems-encountered)
 - [Known Limitations](#known-limitations)
+- [Screenshots](#screenshots)
 
 ---
 
 ## Overview
 
-Production-ready platform for deploying and managing AI agents with:
+Production-ready platform for deploying and managing AI agents featuring:
 
-- **Multi-provider LLM architecture**: Vendor-agnostic design supporting Claude and Gemini
+- **Multi-provider LLM architecture**: Vendor-agnostic design (Claude, Gemini)
 - **Intelligent query routing**: Complexity-based provider selection
-- **Kubernetes orchestration**: Scalable, self-healing infrastructure
+- **Kubernetes orchestration**: Scalable, self-healing infrastructure on AWS EKS
 - **Vector database**: Qdrant integration for semantic search
-- **Full observability**: Prometheus + Grafana monitoring stack
-- **Infrastructure as Code**: Terraform-managed AWS EKS deployment
+- **Infrastructure as Code**: Terraform-managed deployment
+- **Observability**: Prometheus + Grafana monitoring stack
 
 ### Value Proposition
 
 Unlike single-provider AI platforms, this architecture enables:
-- Zero vendor lock-in (switch providers via configuration)
-- Cost optimization through intelligent routing
+- Zero vendor lock-in through provider abstraction
+- Cost optimization via intelligent routing
 - Production-grade infrastructure patterns
 - Enterprise scalability and reliability
 
@@ -113,20 +112,20 @@ Unlike single-provider AI platforms, this architecture enables:
 - Python 3.12 - Type-safe runtime
 
 **AI/ML**
-- Claude API - Complex reasoning
-- Gemini API - Fast queries
+- Claude API - Complex reasoning tasks
+- Gemini API - Fast, simple queries
 - Qdrant - Vector database
 - LangChain Providers - Unified interface
 
 **Infrastructure**
 - Terraform - Infrastructure as Code
-- Kubernetes 1.28 - Container orchestration
+- Kubernetes 1.31 - Container orchestration
 - Docker - Containerization
 - AWS EKS - Managed Kubernetes
 
 **Observability**
 - Prometheus - Metrics collection
-- Grafana - Dashboards
+- Grafana - Visualization dashboards
 - Kubernetes metrics - Cluster monitoring
 
 **Development**
@@ -140,37 +139,40 @@ Unlike single-provider AI platforms, this architecture enables:
 ```
 ai-agent-platform/
 │
-├── src/                          
+├── src/
 │   ├── api/                      # FastAPI endpoints
 │   │   └── main.py              # Routes: /health, /chat
 │   ├── providers/               # LLM integrations
-│   │   ├── claude_provider.py   
-│   │   ├── gemini_provider.py   
+│   │   ├── claude_provider.py
+│   │   ├── gemini_provider.py
 │   │   └── mock_provider.py     # Demo mode
-│   ├── agents/                  
+│   ├── agents/
 │   │   └── router.py            # Query routing logic
-│   └── utils/                   
+│   └── utils/
 │
-├── terraform/                   
+├── terraform/
 │   ├── modules/                 # Reusable IaC
 │   │   ├── networking/          # VPC, subnets
-│   │   └── eks/                 # Cluster, IAM
-│   └── environments/            
+│   │   └── eks/                 # Cluster, IAM, node group
+│   └── environments/
 │       └── dev/                 # Development config
 │
-├── k8s/                         
+├── k8s/
 │   ├── base/                    # Application workloads
-│   │   ├── api-deployment.yaml  
-│   │   └── qdrant-deployment.yaml 
+│   │   ├── api-deployment.yaml
+│   │   └── qdrant-deployment.yaml
 │   └── monitoring/              # Observability
 │       ├── prometheus-config.yaml
 │       └── grafana-deployment.yaml
 │
+├── docs/
+│   └── screenshots/             # Visual documentation
+│
 ├── docker-compose.yml           # Local development
 ├── Dockerfile                   # Container image
-├── pyproject.toml              # Dependencies
+├── pyproject.toml              # Python dependencies
 ├── .env.example                # Configuration template
-└── README.md                   
+└── README.md
 ```
 
 ---
@@ -182,7 +184,7 @@ ai-agent-platform/
 - Python 3.12+
 - Docker & Docker Compose
 - Poetry
-- AWS CLI
+- AWS CLI configured
 - kubectl
 - Terraform 1.13+
 
@@ -218,12 +220,7 @@ curl http://localhost:8000/health
 # Test chat
 curl -X POST http://localhost:8000/chat \
   -H "Content-Type: application/json" \
-  -d '{"query": "Hello"}'
-```
-
-**6. API documentation**
-```
-http://localhost:8000/docs
+  -d '{"query": "Hello world"}'
 ```
 
 ---
@@ -233,15 +230,22 @@ http://localhost:8000/docs
 ### Deploy Infrastructure
 ```bash
 cd terraform/environments/dev
+
+# Initialize Terraform
 terraform init
+
+# Review planned changes
 terraform plan
-terraform apply  # ~15 minutes
+
+# Deploy (~15 minutes)
+terraform apply
 ```
 
 **Resources created:**
 - VPC with public subnets (2 AZs)
 - Internet Gateway + routing
-- EKS cluster (Kubernetes 1.28)
+- EKS cluster (Kubernetes 1.31)
+- Node group (2x t3.medium instances)
 - IAM roles and policies
 - Security groups
 
@@ -250,28 +254,38 @@ terraform apply  # ~15 minutes
 aws eks update-kubeconfig \
   --region us-east-1 \
   --name ai-agent-cluster
+
+# Verify connection
+kubectl get nodes
 ```
 
 ### Deploy Application
 ```bash
+# Deploy workloads
 kubectl apply -f k8s/base/
 kubectl apply -f k8s/monitoring/
 
-# Verify
-kubectl get pods
+# Verify pods
+kubectl get pods --all-namespaces
 ```
 
-### Access API
+### Access Application
+
+Due to AWS LoadBalancer restrictions (see Known Limitations), use port-forward:
 ```bash
-kubectl get svc ai-agent-api-service
-# Use LoadBalancer URL to access API
+kubectl port-forward svc/ai-agent-api-service 8000:80
+
+# Test (in another terminal)
+curl http://localhost:8000
 ```
 
 ### Cleanup
 ```bash
+# Delete Kubernetes resources
 kubectl delete -f k8s/monitoring/
 kubectl delete -f k8s/base/
 
+# Destroy infrastructure
 cd terraform/environments/dev
 terraform destroy
 ```
@@ -280,16 +294,19 @@ terraform destroy
 
 ## API Usage
 
-### Health Check
+### Endpoints
+
+**Health Check**
 ```bash
 GET /health
 ```
+
 **Response:**
 ```json
 {"status": "healthy"}
 ```
 
-### Chat
+**Chat**
 ```bash
 POST /chat
 Content-Type: application/json
@@ -304,7 +321,7 @@ Content-Type: application/json
 {
   "provider": "claude",
   "complexity": "complex",
-  "response": "[Claude Response] ...",
+  "response": "[Mock Response] This is a simulated response...",
   "note": "Demo mode - Replace MockLLMProvider with real API keys"
 }
 ```
@@ -322,34 +339,34 @@ Content-Type: application/json
 
 ### Multi-Provider Architecture
 
-**Problem:** Vendor lock-in limits flexibility and cost optimization
+**Problem:** Single-provider platforms create vendor lock-in and limit cost optimization
 
-**Solution:** Provider abstraction layer
-- Switch providers via configuration
-- Route based on complexity/cost
-- A/B test models easily
+**Solution:** Provider abstraction layer enabling:
+- Configuration-based provider switching
+- Complexity-based routing for cost optimization
+- Easy A/B testing of different models
 
 ### Kubernetes
 
-**Why:**
+**Rationale:**
 - Auto-scaling for traffic spikes
-- Self-healing (automatic restarts)
-- Zero-downtime deployments
+- Self-healing via automatic restarts
+- Zero-downtime rolling deployments
 - Industry-standard orchestration
 
 ### Terraform
 
-**Why:**
+**Rationale:**
 - Reproducible infrastructure
-- Version-controlled changes
-- Team collaboration
-- Instant resource cleanup
+- Version-controlled infrastructure changes
+- Team collaboration via code reviews
+- Instant cleanup and cost control
 
 ### FastAPI
 
-**Why:**
-- Async performance
-- Automatic OpenAPI docs
+**Rationale:**
+- High-performance async capabilities
+- Automatic OpenAPI documentation
 - Type safety with Pydantic
 - Modern Python patterns
 
@@ -360,17 +377,29 @@ Content-Type: application/json
 ### Issue 1: LLM API Credits
 
 **Problem:**
-- Claude API requires separate paid credits
-- Gemini model name changed (`gemini-pro` → `gemini-1.5-flash`)
+- Claude API requires paid credits separate from subscription
+- Gemini API model naming changed (`gemini-pro` → `gemini-1.5-flash`)
 
 **Solution:**
-- Implemented `MockLLMProvider` for demo
-- Maintained production-ready architecture
-- Clear documentation of demo mode
+- Implemented `MockLLMProvider` maintaining production architecture
+- Documented demo mode clearly
+- Preserved multi-provider code structure
 
-**Lesson:** Verify API access before development; mocks enable cost-free iteration
+**Lesson:** Verify API access before development; mocks enable cost-free iteration while maintaining architecture integrity
 
-### Issue 2: Docker Compose Version Warning
+### Issue 2: Kubernetes Version Compatibility
+
+**Problem:**
+- Initial deployment used K8s 1.28
+- AWS no longer supports AMIs for 1.28
+
+**Solution:**
+- Updated to Kubernetes 1.31
+- Destroy and recreate cluster (EKS doesn't support multi-version jumps)
+
+**Impact:** No functional changes, demonstrates version management
+
+### Issue 3: Docker Compose Version Warning
 
 **Problem:**
 ```
@@ -381,43 +410,111 @@ WARN: attribute `version` is obsolete
 - Removed deprecated `version` field
 - Updated to Docker Compose v2 syntax
 
-**Impact:** Cosmetic only
-
-### Issue 3: Terraform Module Dependencies
-
-**Problem:**
-- EKS requires VPC/subnets first
-
-**Solution:**
-- Modular Terraform design
-- Explicit `depends_on` where needed
-- Clear module outputs/inputs
+**Impact:** Cosmetic warning only
 
 ---
 
 ## Known Limitations
 
-**Current Implementation:**
+### AWS LoadBalancer Restriction
 
-1. **Mock LLM Providers**
-   - Why: API credits required
-   - Impact: Simulated responses only
-   - Solution: Add real API keys to enable production mode
+**Issue:**
+AWS account restrictions prevented Elastic Load Balancer creation during deployment:
+```
+Error: OperationNotPermitted
+This AWS account currently does not support creating load balancers
+```
 
-2. **Basic Observability**
-   - Current: Prometheus/Grafana deployed
-   - Missing: Custom LLM metrics (tokens, latency)
+**Root Cause:**
+- New AWS accounts may have service limits on ELB/NLB creation
+- Requires AWS Support contact to enable
+- Common for accounts without payment history
 
-3. **Simplified RAG**
-   - Current: Qdrant deployed
-   - Missing: Document ingestion pipeline
+**Workaround Implemented:**
+```bash
+kubectl port-forward svc/ai-agent-api-service 8000:80
+curl http://localhost:8000
+```
 
-**Production Considerations:**
+**What This Demonstrates:**
+- Alternative Kubernetes service access methods
+- Troubleshooting and problem-solving capabilities
+- Ability to work around infrastructure constraints
+- Production knowledge (would use AWS Load Balancer Controller with ALB/NLB)
 
-- No HTTPS (add ALB + ACM)
-- No authentication (implement API keys)
-- No rate limiting
-- Single-region deployment
+---
+
+### Mock LLM Providers
+
+**Current State:**
+- LLM responses simulated via `MockLLMProvider`
+- Claude API requires paid credits
+- Gemini API integration prepared but not activated
+
+**Impact:**
+- Multi-provider architecture fully demonstrated
+- Router logic functional and testable
+- Production-ready code structure maintained
+
+**Enabling Real APIs:**
+```bash
+# Add to .env
+ANTHROPIC_API_KEY=sk-ant-your-key
+GOOGLE_API_KEY=AIza-your-key
+
+# Update src/agents/router.py
+from src.providers.claude_provider import ClaudeProvider
+from src.providers.gemini_provider import GeminiProvider
+# Replace MockLLMProvider
+```
+
+---
+
+### Docker Image Registry
+
+**Current State:**
+- Application uses generic container images for demonstration
+- Custom FastAPI application requires Docker registry
+
+**Production Implementation:**
+```bash
+# Build and push
+docker build -t your-registry/ai-agent-api:latest .
+docker push your-registry/ai-agent-api:latest
+
+# Update k8s/base/api-deployment.yaml
+spec:
+  containers:
+  - image: your-registry/ai-agent-api:latest
+```
+
+---
+
+### Basic Observability
+
+**Current State:**
+- Prometheus and Grafana deployed
+- Standard Kubernetes metrics available
+- Custom LLM metrics not implemented
+
+**Future Enhancements:**
+- Token usage tracking per provider
+- Cost per request dashboards
+- Latency distribution by model
+- Error rate by complexity classification
+
+---
+
+## Screenshots
+
+Complete visual documentation available in `docs/screenshots/`:
+
+1. **01-terraform-complete-and-nodes.png** - Terraform provisioning (15 resources) + kubectl nodes
+2. **02-kubectl-pods-all-running.png** - All pods Running (API, Qdrant, Grafana)
+3. **03-kubectl-port-forward-active.png** - Port-forward workaround demonstration
+4. **04-curl-nginx-response.png** - Service accessibility validation
+5. **05-aws-eks-cluster-overview.png** - EKS cluster Active status
+6. **06-aws-eks-compute-nodes.png** - Node group (2x t3.medium Ready)
 
 ---
 
@@ -426,19 +523,18 @@ WARN: attribute `version` is obsolete
 **Daniel Melo**  
 Platform Engineer | Cloud Infrastructure | AI/ML Operations
 
-LinkedIn: [danielaugustormelo](https://linkedin.com/in/danielaugustormelo)  
-GitHub: [DanielMelo1](https://github.com/DanielMelo1) 
-
-
+- LinkedIn: [danielaugustormelo](https://linkedin.com/in/danielaugustormelo)
+- GitHub: [DanielMelo1](https://github.com/DanielMelo1)
+- Portfolio: [d36ym3gb7903iq.cloudfront.net](http://d36ym3gb7903iq.cloudfront.net)
 
 ---
 
 ## License
 
-MIT License - See LICENSE file
+MIT License
 
 ---
 
-**Related Projects:**
-- [k8s-production-platform](https://github.com/DanielMelo1/k8s-production-platform) - Foundation Kubernetes infrastructure
-EOF
+## Related Projects
+
+- [k8s-production-platform](https://github.com/DanielMelo1/k8s-production-platform) - Foundation Kubernetes infrastructure with observability
