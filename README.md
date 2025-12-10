@@ -8,6 +8,9 @@
 ![LangChain](https://img.shields.io/badge/LangChain-0.3-1C3C3C?logo=chainlink&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-latest-2496ED?logo=docker&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
+![CI/CD](https://github.com/DanielMelo1/ai-agent-platform/workflows/CI%2FCD%20Pipeline/badge.svg)
+![CI/CD](https://github.com/DanielMelo1/ai-agent-platform/workflows/CI%2FCD%20Pipeline/badge.svg)
+![License](https://img.shields.io/badge/license-MIT-green)
 
 Enterprise-grade AI orchestration platform with multi-provider LLM support, intelligent routing, and Kubernetes deployment.
 

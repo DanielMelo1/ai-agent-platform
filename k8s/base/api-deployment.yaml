@@ -14,10 +14,16 @@ spec:
     spec:
       containers:
       - name: api
-        image: tiangolo/uvicorn-gunicorn-fastapi:python3.11
+        image: ghcr.io/danielmelo1/ai-agent-platform:latest
         ports:
-        - containerPort: 80
-        command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+        - containerPort: 8000
+        env:
+        - name: ANTHROPIC_API_KEY
+          value: "mock-key"
+        - name: GOOGLE_API_KEY
+          value: "mock-key"
+        - name: QDRANT_HOST
+          value: "qdrant-service"
 ---
 apiVersion: v1
 kind: Service
@@ -28,5 +34,5 @@ spec:
     app: ai-agent-api
   ports:
   - port: 80
-    targetPort: 80
+    targetPort: 8000
   type: ClusterIP
